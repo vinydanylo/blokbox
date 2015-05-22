@@ -17,7 +17,7 @@ Spectrograph::Spectrograph(QWidget *parent) :
     startTimer(15);
     // however 256 samples may be delivered to this widget, only
     // 64 are to be displayed becaus of speed limitations ;)
-    NUM_BANDS = 32;
+    NUM_BANDS = 16;
 
     //
     spectrum.resize(NUM_BANDS);
@@ -120,9 +120,7 @@ void Spectrograph::paintEvent(QPaintEvent *e){
     // aqui eh desenhada as linhas do spectrum a partir de um ponto central
     // do painel
     QPoint *centerPoint = new QPoint(this->width()/2,this->height()/2);
-    float flo = p.pen().width();
-    p.setBrush(Qt::magenta);
-    p.drawEllipse(QPointF(centerPoint->rx(),centerPoint->ry()),this->height()/10,this->height()/10);
+    //float flo = p.pen().width();
     for(int i=0; i<NUM_BANDS;i++){
         float p1x, p1y, p2x, p2y, teta;
         p1x = centerPoint->rx();
@@ -131,9 +129,11 @@ void Spectrograph::paintEvent(QPaintEvent *e){
         teta = fi + i * (360*3.1415/180.0) / spectrum.length();
         p2x = p1x + spectrum[i] * cos(teta)/3;
         p2y = p1y + spectrum[i] * sin(teta)/3;
-        p.setPen(QPen(QColor(0,0,spectrum[i]),spectrum[i]/8));
+        p.setPen(QPen(QColor(0,0,spectrum[i]/5),spectrum[i]/8));
         p.drawLine(QPointF(p1x,p1y),QPointF(p2x,p2y));
     }
+    //p.setBrush();
+    p.drawEllipse(QPointF(centerPoint->rx(),centerPoint->ry()),this->height()/8,this->height()/8);
     /*p.setPen(QPen(Qt::black,flo));
     //p.setBrush(Qt::black);
     p.drawRect(0,height()-7,width(),7);
@@ -149,7 +149,7 @@ void Spectrograph::paintEvent(QPaintEvent *e){
 void Spectrograph::timerEvent(QTimerEvent *e){
     // accepts the event (boring messages are not displayed)
     e->accept();
-    fi+=4*3.1415/180.0;
+    fi+=1*3.1415/180.0;
     // processes all spectrum bands
     for(int i=0; i<NUM_BANDS; i++){
         // make the spectrum bar smaller
